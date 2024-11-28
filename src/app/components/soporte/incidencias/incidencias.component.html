@@ -1,0 +1,462 @@
+<div class="grid">
+    <p-toast></p-toast>
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button
+                            pButton
+                            pRipple
+                            label="Filtros"
+                            icon="pi pi-filter"
+                            class="p-button-success mr-2"
+                            (click)="openFiltros()"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            label="Editar"
+                            icon="pi pi-pencil"
+                            class="p-button-warning"
+                            (click)="editarMasivoDialog()"
+                            [disabled]="
+                                !selectedIncidencias ||
+                                !selectedIncidencias.length
+                            "
+                        ></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <p-fileUpload
+                        #fileUpload
+                        mode="basic"
+                        accept=".csv"
+                        [maxFileSize]="1000000"
+                        label="Importar"
+                        chooseLabel="Importar"
+                        class="mr-2 inline-block"
+                        (onSelect)="onFileSelect($event, fileUpload)"
+                    ></p-fileUpload>
+
+                    <button
+                        pButton
+                        pRipple
+                        label="Actualizar"
+                        icon="pi pi-sync"
+                        class="p-button-help"
+                        (click)="actualizarTabla()"
+                        [loading]="loading"
+                    ></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table
+                #dt
+                [value]="incidencias"
+                [columns]="cols"
+                responsiveLayout="scroll"
+                [rows]="10"
+                [globalFilterFields]="[
+                    'ruc',
+                    'fecha',
+                    'razonsocial',
+                    'partner',
+                    'documento',
+                    'coderror'
+                ]"
+                [paginator]="true"
+                [rowsPerPageOptions]="[10, 20, 30]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [(selection)]="selectedIncidencias"
+                selectionMode="multiple"
+                [rowHover]="true"
+                dataKey="id"
+                [loading]="loading"
+                styleClass="p-datatable-striped"
+            >
+                <ng-template pTemplate="caption">
+                    <div
+                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+                    >
+                        <h5 class="m-0">Incidencias</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input
+                                pInputText
+                                type="text"
+                                (input)="onGlobalFilter(dt, $event)"
+                                placeholder="Buscar..."
+                                class="w-full sm:w-auto"
+                            />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th>Revisado</th>
+                        <th pSortableColumn="ruc">
+                            RUC <p-sortIcon field="name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="fecha">
+                            Fecha <p-sortIcon field="fecha"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="razonsocial">
+                            Razón Social
+                            <p-sortIcon field="razonsocial"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="partner">
+                            Partner <p-sortIcon field="partner"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="documento">
+                            Documento
+                            <p-sortIcon field="documento"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="coderror">
+                            Cod. Error
+                            <p-sortIcon field="coderror"></p-sortIcon>
+                        </th>
+                        <th>Operaciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-incidencia>
+                    <tr>
+                        <td style="width: 3%">
+                            <p-tableCheckbox
+                                [value]="incidencia"
+                            ></p-tableCheckbox>
+                        </td>
+                        <td
+                            style="width: 7%"
+                            [innerHTML]="bodyRevisado(incidencia.revisado)"
+                        ></td>
+                        <td style="width: 10%">
+                            {{ incidencia.ruc }}
+                        </td>
+                        <td style="width: 10%">
+                            {{ incidencia.fecha | date: 'yyyy-MM-dd':'UTC' }}
+                        </td>
+                        <td style="width: 33%">
+                            {{ incidencia.razonsocial }}
+                        </td>
+                        <td style="width: 8%">
+                            {{ incidencia.partner }}
+                        </td>
+                        <td style="width: 10%">
+                            {{ incidencia.documento }}
+                        </td>
+                        <td style="width: 9%">
+                            {{ incidencia.coderror }}
+                        </td>
+                        <td style="width: 10%">
+                            <div class="flex">
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-eye"
+                                    class="p-button-rounded p-button-info mr-2"
+                                    (click)="verIncidencia(incidencia)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-warning mr-2"
+                                    (click)="editarMasivoDialog(incidencia)"
+                                ></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td
+                            style="text-align: center; padding: 1rem 0"
+                            colspan="9"
+                        >
+                            No se encontraron incidencias para mostrar
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog
+            [(visible)]="verIncidenciaDialog"
+            [style]="{ width: '550px' }"
+            header="Detalle Incidencia"
+            [modal]="true"
+            class="p-fluid"
+        >
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-4">
+                        <label for="ruc">RUC:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="incidencia.ruc"
+                            disabled
+                        />
+                    </div>
+                    <div class="field col-12 md:col-8">
+                        <label for="quantity">Razon Social:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="incidencia.razonsocial"
+                            disabled
+                        />
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-4">
+                        <label for="ruc">Documento:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="incidencia.documento"
+                            disabled
+                        />
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <label for="quantity">Fecha:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="incidencia.fecha | date : 'yyyy-MM-dd'"
+                            disabled
+                        />
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <label for="quantity">Cod. Error:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="incidencia.coderror"
+                            disabled
+                        />
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <label for="ruc">Descripcion del error:</label>
+                        <textarea
+                            rows="6"
+                            cols="1"
+                            pInputTextarea
+                            [value]="incidencia.descripcion"
+                            disabled
+                            style="resize: vertical"
+                        ></textarea>
+                    </div>
+                </div>
+                @if (incidencia.estado === 1) {
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <label for="ruc">Descripción de la solución:</label>
+                        <textarea
+                            rows="2"
+                            cols="1"
+                            pInputTextarea
+                            [value]="incidencia.detalle"
+                            disabled
+                            style="resize: vertical"
+                        ></textarea>
+                    </div>
+                </div>
+                }
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    label="Cancel"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="hideDialogVer()"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    label="Listo"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="hideDialogVer()"
+                ></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog
+            [(visible)]="filtrosDialog"
+            header="Filtros Generales"
+            [modal]="true"
+            [style]="{ width: '600px' }"
+            class="p-fluid"
+        >
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label for="codErrors">Errores (*):</label>
+                        <p-multiSelect
+                            name="codErrors"
+                            [options]="codErrors"
+                            [(ngModel)]="selectedCodErrors"
+                            optionLabel="name"
+                            placeholder="Seleccione los errores"
+                            [filter]="true"
+                            required
+                            appendTo="body"
+                        />
+                        <!--
+                        [ngClass]="{
+                                'ng-invalid ng-dirty':
+                                    submitted && !product.name
+                            }"
+                            <small
+                            class="ng-dirty ng-invalid"
+                            *ngIf="submitted && !product.name"
+                            >Debe seleccionar al menos un error.</small
+                        > -->
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="estados">Estados (*):</label>
+                        <p-multiSelect
+                            name="estados"
+                            [options]="estados"
+                            [(ngModel)]="selectedEstados"
+                            optionLabel="name"
+                            placeholder="Seleccione los estados"
+                            required
+                            [showClear]="true"
+                            appendTo="body"
+                        />
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label for="fechaInicio">Fecha Inicio (*):</label>
+                        <p-calendar
+                            name="fechaInicio"
+                            [(ngModel)]="filtros.fechaInicio"
+                            dateFormat="yy-mm-dd"
+                            [showIcon]="true"
+                            inputId="buttondisplay"
+                            [showOnFocus]="false"
+                            appendTo="body"
+                            (onSelect)="onDateSelect($event, 'fechaInicio')"
+                        />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="fechaFin">Fecha Fin (*):</label>
+                        <p-calendar
+                            name="fechaFin"
+                            [(ngModel)]="filtros.fechaFin"
+                            dateFormat="yy-mm-dd"
+                            [showIcon]="true"
+                            inputId="buttondisplay"
+                            [showOnFocus]="false"
+                            appendTo="body"
+                            (onSelect)="onDateSelect($event, 'fechaFin')"
+                        />
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="hideDialogFiltros()"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    [(label)]="estadoSubmit"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="aplicarFiltros()"
+                ></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog
+            [(visible)]="editarIncidenciasDialog"
+            [header]="flagMasivo ? 'Editar Incidencias' : 'Editar Incidencia'"
+            [modal]="true"
+            [style]="{ width: '600px' }"
+            class="p-fluid"
+        >
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label for="desc">Incidencias (*):</label>
+                        <input
+                            name="desc"
+                            type="text"
+                            pInputText
+                            [value]="
+                                selectedIncidencias.length + ' seleccionadas'
+                            "
+                            disabled
+                        />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="desc">Pasar a (*):</label>
+                        <p-dropdown
+                            [options]="estadosEditar"
+                            [(ngModel)]="editarRequest.estado"
+                            optionLabel="name"
+                            placeholder="Seleccione un estado"
+                            (onChange)="onChangeEstado($event)"
+                        />
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <label for="estados">Detalle de solución (*):</label>
+                        <textarea
+                            rows="3"
+                            cols="1"
+                            pInputTextarea
+                            [(ngModel)]="editarRequest.detalle"
+                            style="resize: vertical"
+                            [disabled]="editarRequest.estado.code == 2"
+                        ></textarea>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="hideDialogEditarMasivo()"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    [(label)]="estadoSubmit"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="editarMasivo()"
+                    [disabled]="!editarRequest.detalle"
+                ></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>

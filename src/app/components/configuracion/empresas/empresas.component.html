@@ -1,0 +1,388 @@
+<div class="grid">
+    <p-toast></p-toast>
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button
+                            pButton
+                            pRipple
+                            label="Filtros"
+                            icon="pi pi-filter"
+                            class="p-button-success mr-2"
+                            (click)="openFiltros()"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            label="Editar"
+                            icon="pi pi-pencil"
+                            class="p-button-warning"
+                            (click)="editarMasivoDialog()"
+                            [disabled]="
+                                !selectedIncidencias ||
+                                !selectedIncidencias.length
+                            "
+                        ></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <p-fileUpload
+                        #fileUpload
+                        mode="basic"
+                        accept=".csv"
+                        [maxFileSize]="1000000"
+                        label="Importar"
+                        chooseLabel="Importar"
+                        class="mr-2 inline-block"
+                        (onSelect)="onFileSelect($event, fileUpload)"
+                    ></p-fileUpload>
+
+                    <button
+                        pButton
+                        pRipple
+                        label="Actualizar"
+                        icon="pi pi-sync"
+                        class="p-button-help"
+                        (click)="actualizarTabla()"
+                        [loading]="loading"
+                    ></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table
+                #dt
+                [value]="empresas"
+                [columns]="cols"
+                responsiveLayout="scroll"
+                [rows]="10"
+                [globalFilterFields]="[
+                    'ruc',
+                    'razonsocial',
+                    'partner',
+                    'estado',
+                    'modalidad',
+                    'modlocal',
+                    'ultmodificacion',
+                    'formaenvio'
+                ]"
+                [paginator]="true"
+                [rowsPerPageOptions]="[10, 20, 30]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [rowHover]="true"
+                dataKey="id"
+                [loading]="loading"
+                styleClass="p-datatable-striped"
+            >
+                <ng-template pTemplate="caption">
+                    <div
+                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+                    >
+                        <h5 class="m-0">Empresas</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input
+                                pInputText
+                                type="text"
+                                (input)="onGlobalFilter(dt, $event)"
+                                placeholder="Buscar..."
+                                class="w-full sm:w-auto"
+                            />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="ruc">
+                            RUC <p-sortIcon field="ruc"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="razonsocial">
+                            Razón Social
+                            <p-sortIcon field="razonsocial"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="partner">
+                            Partner <p-sortIcon field="partner"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="estado">
+                            Estado
+                            <p-sortIcon field="estado"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="modalidad">
+                            Modalidad
+                            <p-sortIcon field="modalidad"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="modlocal">
+                            Mod. Local
+                            <p-sortIcon field="modlocal"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="ultmodificacion">
+                            Ult. Mod.
+                            <p-sortIcon field="ultmodificacion"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="formaenvio">
+                            Envio
+                            <p-sortIcon field="formaenvio"></p-sortIcon>
+                        </th>
+                        <th>Operaciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-empresa>
+                    <tr>
+                        <td style="width: 8%">
+                            {{ empresa.ruc }}
+                        </td>
+                        <td style="width: 24%">
+                            {{ empresa.razonsocial }}
+                        </td>
+                        <td style="width: 8%">
+                            {{ empresa.partner }}
+                        </td>
+                        <td style="width: 10%">
+                            {{ empresa.estado }}
+                        </td>
+                        <td style="width: 10%">
+                            {{ empresa.modalidad }}
+                        </td>
+                        <td style="width: 10%">
+                            {{ empresa.modlocal }}
+                        </td>
+                        <td style="width: 12%">
+                            {{ empresa.ultmodificacion || "-" }}
+                        </td>
+                        <td style="width: 8%">
+                            {{ empresa.formaenvio || "-" }}
+                        </td>
+                        <td style="width: 10%">
+                            <div class="flex">
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-eye"
+                                    class="p-button-rounded p-button-info mr-2"
+                                    (click)="verIncidencia(empresa)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-warning mr-2"
+                                    (click)="editarMasivoDialog(empresa)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-trash"
+                                    class="p-button-rounded p-button-danger mr-2"
+                                    (click)="eliminarEmpresa(empresa)"
+                                ></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td
+                            style="text-align: center; padding: 1rem 0"
+                            colspan="9"
+                        >
+                            No se encontraron empresas para mostrar
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog
+            [(visible)]="empresaDialog"
+            [style]="{ width: '550px' }"
+            header="Detalle Empresa"
+            [modal]="true"
+            class="p-fluid"
+        >
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-4">
+                        <label for="ruc">RUC:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="incidencia.ruc"
+                            disabled
+                        />
+                    </div>
+                    <div class="field col-12 md:col-8">
+                        <label for="quantity">Razon Social:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="incidencia.razonsocial"
+                            disabled
+                        />
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-4">
+                        <label for="ruc">Documento:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="incidencia.documento"
+                            disabled
+                        />
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <label for="quantity">Fecha:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="incidencia.fecha | date : 'yyyy-MM-dd'"
+                            disabled
+                        />
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <label for="quantity">Cod. Error:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="incidencia.coderror"
+                            disabled
+                        />
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <label for="ruc">Descripcion del error:</label>
+                        <textarea
+                            rows="6"
+                            cols="1"
+                            pInputTextarea
+                            [value]="incidencia.descripcion"
+                            disabled
+                            style="resize: vertical"
+                        ></textarea>
+                    </div>
+                </div>
+                @if (incidencia.estado === 1) {
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <label for="ruc">Descripción de la solución:</label>
+                        <textarea
+                            rows="2"
+                            cols="1"
+                            pInputTextarea
+                            [value]="incidencia.detalle"
+                            disabled
+                            style="resize: vertical"
+                        ></textarea>
+                    </div>
+                </div>
+                }
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    label="Cancel"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="hideDialogVer()"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    label="Listo"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="hideDialogVer()"
+                ></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog
+            [(visible)]="filtrosDialog"
+            header="Filtros Generales"
+            [modal]="true"
+            [style]="{ width: '600px' }"
+            class="p-fluid"
+        >
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label for="ruc">RUC:</label>
+                        <input
+                            name="ruc"
+                            type="text"
+                            pInputText
+                            [(ngModel)]="filtros.ruc"
+                        />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="razonsocial">Razón Social:</label>
+                        <input
+                            name="razonsocial"
+                            type="text"
+                            pInputText
+                            [(ngModel)]="filtros.razonsocial"
+                        />
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-4">
+                        <label for="codErrors">Partner:</label>
+                        <p-dropdown
+                            [options]="selectedPartners"
+                            [(ngModel)]="filtros.partner"
+                            optionLabel="name"
+                            placeholder="Seleccione el partner"
+                            appendTo="body"
+                        />
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <label for="codErrors">Estado:</label>
+                        <p-dropdown
+                            [options]="estadosEmpresa"
+                            [(ngModel)]="filtros.estado"
+                            optionLabel="name"
+                            placeholder="Seleccione el partner"
+                            appendTo="body"
+                        />
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <label for="codErrors">Mod. Local:</label>
+                        <p-dropdown
+                            [options]="modificarLocal"
+                            [(ngModel)]="filtros.modlocal"
+                            optionLabel="name"
+                            placeholder="Seleccione el partner"
+                            appendTo="body"
+                        />
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="hideDialogFiltros()"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    [(label)]="estadoSubmit"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="aplicarFiltros()"
+                ></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>
