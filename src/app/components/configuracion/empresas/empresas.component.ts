@@ -45,6 +45,15 @@ export class EmpresasComponent implements OnInit {
         this.empresasService.listar().subscribe({
             next: (res) => {
                 this.empresas = res.data;
+                this.empresas = this.empresas.filter(empresa => {
+                    return (
+                        (this.filtros.ruc ? empresa.ruc?.includes(this.filtros.ruc) : true) &&
+                        (this.filtros.razonsocial ? empresa.razonsocial?.includes(this.filtros.razonsocial) : true) &&
+                        (this.filtros.partner.name ? empresa.partner?.includes(this.filtros.partner.name) : true) &&
+                        (this.filtros.estado.name ? empresa.estado === this.filtros.estado.name : true) &&
+                        (this.filtros.modlocal.name ? empresa.modlocal?.includes(this.filtros.modlocal.name) : true)
+                    );
+                });
                 this.loading = false;
             },
             error: (error: HttpErrorResponse) => {
@@ -84,13 +93,6 @@ export class EmpresasComponent implements OnInit {
 
     hideDialogFiltros() {
         this.filtrosDialog = false;
-        this.filtros = {
-            ruc: '',
-            razonsocial: '',
-            estado: {} as OptionsString,
-            partner: {} as OptionsString,
-            modlocal: {} as OptionsString
-        };
     }
 
     onGlobalFilter(dt: any, event: any) {
@@ -106,13 +108,12 @@ export class EmpresasComponent implements OnInit {
         this.loading = true;
         this.estadoSubmit = 'Aplicando filtros...';
 
-        const empresaFilters: Empresa[] = this.empresas;
-        this.empresas = empresaFilters.filter(empresa => {
+        this.empresas = this.empresas.filter(empresa => {
             return (
                 (this.filtros.ruc ? empresa.ruc?.includes(this.filtros.ruc) : true) &&
                 (this.filtros.razonsocial ? empresa.razonsocial?.includes(this.filtros.razonsocial) : true) &&
                 (this.filtros.partner.name ? empresa.partner?.includes(this.filtros.partner.name) : true) &&
-                (this.filtros.estado.name ? empresa.estado?.includes(this.filtros.estado.name) : true) &&
+                (this.filtros.estado.name ? empresa.estado === this.filtros.estado.name : true) &&
                 (this.filtros.modlocal.name ? empresa.modlocal?.includes(this.filtros.modlocal.name) : true)
             );
         });

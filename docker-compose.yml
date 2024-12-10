@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+    angular-app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "4200:4200" # Mapea el puerto del contenedor al host
+        volumes:
+            - ./:/app # Sincroniza el código local con el contenedor para live reload
+            - /node_modules # Evita conflictos de dependencias
+        environment:
+            - CHOKIDAR_USEPOLLING=true # Habilita live reload en Docker
+        mem_limit: 4g # Limita el uso máximo de memoria a 4GB
+        deploy:
+            resources:
+                limits:
+                    memory: 4g # Máximo de memoria RAM
+                    cpus: '1.0' # Máximo de 1 núcleo de CPU
+                reservations:
+                    memory: 2g # Reserva preferente de 2GB de memoria
+        restart: always # Reinicia automáticamente en caso de fallo

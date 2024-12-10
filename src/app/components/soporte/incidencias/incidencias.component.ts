@@ -96,6 +96,7 @@ export class IncidenciasComponent implements OnInit {
         { name: '2119', code: '2119' },
         { name: '2116', code: '2116' },
         { name: '2108', code: '2108' },
+        { name: '2105', code: '2105' },
         { name: '2062', code: '2062' },
         { name: '2033', code: '2033' },
         { name: '2027', code: '2027' },
@@ -104,6 +105,7 @@ export class IncidenciasComponent implements OnInit {
         { name: '2017', code: '2017' },
         { name: '2014', code: '2014' },
         { name: '2011', code: '2011' },
+        { name: '2010', code: '2010' },
         { name: '200', code: '200' },
         { name: '138', code: '138' },
         { name: '125', code: '125' },
@@ -153,6 +155,10 @@ export class IncidenciasComponent implements OnInit {
 
     ngOnInit() {
         this.listarIncidencias();
+    }
+
+    onGlobalFilter(dt: any, event: any) {
+        dt.filterGlobal(event.target.value, 'contains');
     }
 
     private formatDate(date: Date): string {
@@ -314,17 +320,28 @@ export class IncidenciasComponent implements OnInit {
             this.selectedIncidencias = [incidencia];
             switch (incidencia.coderror) {
                 case '2108':
-                    if (incidencia.documento.includes('F')) {
+                    if (incidencia.tipodocumento === '01') {
                         this.editarRequest.detalle = "Documento fue enviado después de 3 días de su emisión";
-                    } else {
+                    } else if (incidencia.tipodocumento === '09') {
                         this.editarRequest.detalle = "Documento fue enviado después de 24h de su emisión";
+                    } else if (incidencia.tipodocumento === '07') {
+                        this.editarRequest.detalle = "Documento fue enviado después de 7 días de su emisión";
                     }
                     break;
                 case '2323':
-                    this.editarRequest.detalle = "Documento al que hace referencia ya fue anulado por ";
+                    this.editarRequest.detalle = "Documento al que hace referencia ya fue anulado por _baja_";
+                    break;
+                case '2957':
+                    if (incidencia.documento.includes('RA-')) {
+                        this.editarRequest.detalle = "Documento intenta anular comprobante del _fecha_, ya superó la fecha límite";
+                    }
                     break;
                 default:
-                    this.editarRequest.detalle = "Documento emitido";
+                    if (incidencia.revisado === 2) {
+                        this.editarRequest.detalle = "Documento fue reportado al partner, no se obtuvo respuesta, queda en su posición solucionar el documento";
+                    } else {
+                        this.editarRequest.detalle = "Documento emitido";
+                    }
                     break;
             }
         }

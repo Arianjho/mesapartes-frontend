@@ -256,7 +256,7 @@
                         ></textarea>
                     </div>
                 </div>
-                @if (incidencia.estado === 1) {
+                @if (incidencia.revisado === 1) {
                 <div class="formgrid grid">
                     <div class="field col-12">
                         <label for="ruc">Descripción de la solución:</label>
@@ -454,7 +454,6 @@
                     icon="pi pi-check"
                     class="p-button-text"
                     (click)="editarMasivo()"
-                    [disabled]="!editarRequest.detalle"
                 ></button>
             </ng-template>
         </p-dialog>
