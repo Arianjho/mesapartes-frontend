@@ -35,14 +35,17 @@ export class IncidenciasComponent implements OnInit {
         { name: '98', code: '98' },
         { name: '400', code: '400' },
         { name: '3444', code: '3444' },
+        { name: '3441', code: '3441' },
         { name: '3443', code: '3443' },
         { name: '3378', code: '3378' },
         { name: '3367', code: '3367' },
         { name: '3359', code: '3359' },
         { name: '3350', code: '3350' },
+        { name: '3349', code: '3349' },
         { name: '3348', code: '3348' },
         { name: '3321', code: '3321' },
         { name: '3319', code: '3319' },
+        { name: '3300', code: '3300' },
         { name: '3294', code: '3294' },
         { name: '3292', code: '3292' },
         { name: '3286', code: '3286' },
@@ -52,6 +55,7 @@ export class IncidenciasComponent implements OnInit {
         { name: '3277', code: '3277' },
         { name: '3276', code: '3276' },
         { name: '3275', code: '3275' },
+        { name: '3274', code: '3274' },
         { name: '3272', code: '3272' },
         { name: '3271', code: '3271' },
         { name: '3270', code: '3270' },
@@ -68,6 +72,7 @@ export class IncidenciasComponent implements OnInit {
         { name: '3123', code: '3123' },
         { name: '3111', code: '3111' },
         { name: '3105', code: '3105' },
+        { name: '3103', code: '3103' },
         { name: '306', code: '306' },
         { name: '3031', code: '3031' },
         { name: '3020', code: '3020' },
@@ -79,10 +84,14 @@ export class IncidenciasComponent implements OnInit {
         { name: '2885', code: '2885' },
         { name: '2883', code: '2883' },
         { name: '2802', code: '2802' },
+        { name: '2671', code: '2671' },
         { name: '2663', code: '2663' },
+        { name: '2638', code: '2638' },
         { name: '2536', code: '2536' },
         { name: '2521', code: '2521' },
         { name: '2375', code: '2375' },
+        { name: '2370', code: '2370' },
+        { name: '2346', code: '2346' },
         { name: '2329', code: '2329' },
         { name: '2326', code: '2326' },
         { name: '2325', code: '2325' },
@@ -92,12 +101,14 @@ export class IncidenciasComponent implements OnInit {
         { name: '2255', code: '2255' },
         { name: '2223', code: '2223' },
         { name: '2209', code: '2209' },
+        { name: '2121', code: '2121' },
         { name: '2120', code: '2120' },
         { name: '2119', code: '2119' },
         { name: '2116', code: '2116' },
         { name: '2108', code: '2108' },
         { name: '2105', code: '2105' },
         { name: '2062', code: '2062' },
+        { name: '2048', code: '2048' },
         { name: '2033', code: '2033' },
         { name: '2027', code: '2027' },
         { name: '2022', code: '2022' },
@@ -123,6 +134,8 @@ export class IncidenciasComponent implements OnInit {
         { name: 'Registrado', code: 0 },
         { name: 'Revisado', code: 1 },
         { name: 'Pendiente', code: 2 },
+        { name: 'Inhabilitado', code: 3 },
+        { name: 'Pendiente de Pago', code: 4 }
     ]
 
     private estadosEditar: OptionsNumber[] = [
@@ -276,6 +289,8 @@ export class IncidenciasComponent implements OnInit {
                 return "<span class='p-tag p-tag-warning'> Pendiente </span>";
             case 3:
                 return "<span class='p-tag p-tag-danger'> Inhabilitado </span>";
+            case 4:
+                return "<span class='p-tag p-tag-danger'> Pend. Pago </span>";
             default:
                 return "Desconocido";
         }
@@ -332,13 +347,15 @@ export class IncidenciasComponent implements OnInit {
                     this.editarRequest.detalle = "Documento al que hace referencia ya fue anulado por _baja_";
                     break;
                 case '2957':
-                    if (incidencia.documento.includes('RA-')) {
+                    if (incidencia.documento.includes('RA-') || incidencia.documento.includes('RC-')) {
                         this.editarRequest.detalle = "Documento intenta anular comprobante del _fecha_, ya superó la fecha límite";
                     }
                     break;
                 default:
                     if (incidencia.revisado === 2) {
-                        this.editarRequest.detalle = "Documento fue reportado al partner, no se obtuvo respuesta, queda en su posición solucionar el documento";
+                        this.editarRequest.detalle = "Documento fue reportado al partner, no se obtuvo respuesta, queda en su posición solucionar el documento o solucionar el problema para futuras emisiones";
+                    } else if (incidencia.partner === "IVAN" && incidencia.coderror === "NULL") {
+                        this.editarRequest.detalle = "Grupo IVAN, el gestiona sus envios";
                     } else {
                         this.editarRequest.detalle = "Documento emitido";
                     }

@@ -32,6 +32,10 @@ export const estadosEmpresa: OptionsString[] = [
     {
         name: 'DE BAJA',
         code: 'DE BAJA'
+    },
+    {
+        name: 'NOPAGO',
+        code: 'NOPAGO'
     }
 ]
 

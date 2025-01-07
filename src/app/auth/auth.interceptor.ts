@@ -40,8 +40,12 @@ export class AuthInterceptor implements HttpInterceptor {
                         this.messageService.add({ severity: 'error', summary: 'Acceso Denegado', detail: 'Sesión expirada. Por favor inicie sesión nuevamente.' });
                         localStorage.removeItem('token');
                         this.router.navigate(['/auth/login']);
-                    } else {
-                        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error inesperado. Inténtelo más tarde.' });
+                    } else if (error.status === 400) {
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Ocurrio un error',
+                            detail: error.error.message
+                        });
                     }
                 }
                 return throwError(() => error);

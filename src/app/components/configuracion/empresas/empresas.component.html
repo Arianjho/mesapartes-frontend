@@ -16,14 +16,10 @@
                         <button
                             pButton
                             pRipple
-                            label="Editar"
+                            label="Agregar"
                             icon="pi pi-pencil"
                             class="p-button-warning"
-                            (click)="editarMasivoDialog()"
-                            [disabled]="
-                                !selectedIncidencias ||
-                                !selectedIncidencias.length
-                            "
+                            (click)="agregarEmpresa()"
                         ></button>
                     </div>
                 </ng-template>
@@ -54,7 +50,7 @@
 
             <p-table
                 #dt
-                [value]="empresas"
+                [value]="empresasFiltradas"
                 [columns]="cols"
                 responsiveLayout="scroll"
                 [rows]="10"
@@ -169,7 +165,7 @@
                                     pRipple
                                     icon="pi pi-pencil"
                                     class="p-button-rounded p-button-warning mr-2"
-                                    (click)="editarMasivoDialog(empresa)"
+                                    (click)="editarEmpresa(empresa)"
                                 ></button>
                                 <button
                                     pButton
@@ -198,7 +194,7 @@
         <p-dialog
             [(visible)]="empresaDialog"
             [style]="{ width: '550px' }"
-            header="Detalle Empresa"
+            header="Detalle Empresa - {{ empresa.ruc }}"
             [modal]="true"
             class="p-fluid"
         >
@@ -209,7 +205,7 @@
                         <input
                             type="text"
                             pInputText
-                            [value]="incidencia.ruc"
+                            [value]="empresa.ruc"
                             disabled
                         />
                     </div>
@@ -218,68 +214,69 @@
                         <input
                             type="text"
                             pInputText
-                            [value]="incidencia.razonsocial"
+                            [value]="empresa.razonsocial"
                             disabled
                         />
                     </div>
                 </div>
                 <div class="formgrid grid">
                     <div class="field col-12 md:col-4">
-                        <label for="ruc">Documento:</label>
+                        <label for="ruc">Partner:</label>
                         <input
                             type="text"
                             pInputText
-                            [value]="incidencia.documento"
+                            [value]="empresa.partner"
                             disabled
                         />
                     </div>
                     <div class="field col-12 md:col-4">
-                        <label for="quantity">Fecha:</label>
+                        <label for="quantity">Estado:</label>
                         <input
                             type="text"
                             pInputText
-                            [value]="incidencia.fecha | date : 'yyyy-MM-dd'"
+                            [value]="empresa.estado"
                             disabled
                         />
                     </div>
                     <div class="field col-12 md:col-4">
-                        <label for="quantity">Cod. Error:</label>
+                        <label for="quantity">Modalidad:</label>
                         <input
                             type="text"
                             pInputText
-                            [value]="incidencia.coderror"
+                            [value]="empresa.modalidad"
                             disabled
                         />
                     </div>
                 </div>
                 <div class="formgrid grid">
-                    <div class="field col-12">
-                        <label for="ruc">Descripcion del error:</label>
-                        <textarea
-                            rows="6"
-                            cols="1"
-                            pInputTextarea
-                            [value]="incidencia.descripcion"
+                    <div class="field col-12 md:col-4">
+                        <label for="ruc">Mod. Local:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="empresa.modlocal"
                             disabled
-                            style="resize: vertical"
-                        ></textarea>
+                        />
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <label for="quantity">Ultima modificacion:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="empresa.ultmodificacion ?? '-'"
+                            disabled
+                        />
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <label for="quantity">Forma de envio:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [value]="empresa.formaenvio ?? '-'"
+                            disabled
+                        />
                     </div>
                 </div>
-                @if (incidencia.estado === 1) {
-                <div class="formgrid grid">
-                    <div class="field col-12">
-                        <label for="ruc">Descripción de la solución:</label>
-                        <textarea
-                            rows="2"
-                            cols="1"
-                            pInputTextarea
-                            [value]="incidencia.detalle"
-                            disabled
-                            style="resize: vertical"
-                        ></textarea>
-                    </div>
-                </div>
-                }
             </ng-template>
 
             <ng-template pTemplate="footer">
@@ -298,6 +295,110 @@
                     icon="pi pi-check"
                     class="p-button-text"
                     (click)="hideDialogVer()"
+                ></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog
+            [(visible)]="empresaEditDialog"
+            [style]="{ width: '550px' }"
+            [header]="labelDialog"
+            [modal]="true"
+            class="p-fluid"
+        >
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-4">
+                        <label for="ruc">RUC (*):</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [(ngModel)]="empresaRequest.ruc"
+                        />
+                    </div>
+                    <div class="field col-12 md:col-8">
+                        <label for="quantity">Razón Social:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [(ngModel)]="empresaRequest.razonsocial"
+                        />
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-4">
+                        <label for="ruc">Partner (*):</label>
+                        <p-dropdown
+                            [options]="selectedPartners"
+                            [(ngModel)]="empresaRequest.partner"
+                            optionLabel="name"
+                            optionValue="name"
+                            placeholder="Seleccione el partner"
+                            appendTo="body"
+                        ></p-dropdown>
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <label for="quantity">Estado (*):</label>
+                        <p-dropdown
+                            [options]="estadosEmpresa"
+                            [(ngModel)]="empresaRequest.estado"
+                            optionLabel="name"
+                            optionValue="code"
+                            placeholder="Seleccione el estado"
+                            appendTo="body"
+                        />
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <label for="quantity">Modalidad (*):</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [(ngModel)]="empresaRequest.modalidad"
+                        />
+                    </div>
+                </div>
+
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label for="modlocal">Mod. Local (*):</label>
+                        <p-dropdown
+                            [options]="modificarLocal"
+                            [(ngModel)]="empresaRequest.modlocal"
+                            optionLabel="name"
+                            optionValue="code"
+                            placeholder="¿Se modificará el local?"
+                            appendTo="body"
+                        ></p-dropdown>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="quantity">Forma de envío:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [(ngModel)]="empresaRequest.formaenvio"
+                        />
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    label="Cancel"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="hideDialogEditar()"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    [label]="estadoSubmit"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="submitEditarEmpresa(empresaRequest, operacion)"
+                    [loading]="loading"
                 ></button>
             </ng-template>
         </p-dialog>
@@ -376,11 +477,53 @@
                 ></button>
                 <button
                     pButton
+                    label="Limpiar"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="limpiarFiltros()"
+                ></button>
+                <button
+                    pButton
                     pRipple
                     [(label)]="estadoSubmit"
                     icon="pi pi-check"
                     class="p-button-text"
                     (click)="aplicarFiltros()"
+                ></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog
+            [(visible)]="empresaDeleteDialog"
+            header="Eliminar empresa - {{ empresa.ruc }}"
+            [modal]="true"
+            [style]="{ width: '600px' }"
+            class="p-fluid"
+        >
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <p>¿Estás seguro de eliminar la empresa?</p>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="hideDialogEliminar()"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    [(label)]="estadoSubmit"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="eliminarEmpresaSubmit(empresa.id)"
                 ></button>
             </ng-template>
         </p-dialog>
