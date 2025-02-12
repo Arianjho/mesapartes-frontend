@@ -34,6 +34,7 @@ export class IncidenciasComponent implements OnInit {
         { name: 'NULL', code: 'NULL' },
         { name: '98', code: '98' },
         { name: '400', code: '400' },
+        { name: '3489', code: '3489' },
         { name: '3444', code: '3444' },
         { name: '3441', code: '3441' },
         { name: '3443', code: '3443' },
@@ -84,6 +85,8 @@ export class IncidenciasComponent implements OnInit {
         { name: '2885', code: '2885' },
         { name: '2883', code: '2883' },
         { name: '2802', code: '2802' },
+        { name: '2769', code: '2769' },
+        { name: '2679', code: '2679' },
         { name: '2671', code: '2671' },
         { name: '2663', code: '2663' },
         { name: '2638', code: '2638' },
@@ -162,7 +165,7 @@ export class IncidenciasComponent implements OnInit {
     constructor(private incidenciasService: IncidenciasService, private messageService: MessageService) {
         const now = new Date();
         this.filtros.fechaFin = this.formatDate(now);
-        now.setDate(now.getDate() - 30);
+        now.setDate(now.getDate() - 60);
         this.filtros.fechaInicio = this.formatDate(now);
     }
 

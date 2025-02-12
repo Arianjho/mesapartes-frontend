@@ -6,7 +6,9 @@
                     <span class="block text-500 font-medium mb-3"
                         >Incidencias pendientes</span
                     >
-                    <div class="text-900 font-medium text-xl">152</div>
+                    <div class="text-900 font-medium text-xl">
+                        {{ dashboard.incidencias_pendientes }}
+                    </div>
                 </div>
                 <div
                     class="flex align-items-center justify-content-center bg-blue-100 border-round"
@@ -24,7 +26,9 @@
                     <span class="block text-500 font-medium mb-3"
                         >Incidencias registradas</span
                     >
-                    <div class="text-900 font-medium text-xl">50</div>
+                    <div class="text-900 font-medium text-xl">
+                        {{ dashboard.incidencias_registradas }}
+                    </div>
                 </div>
                 <div
                     class="flex align-items-center justify-content-center bg-orange-100 border-round"
@@ -42,7 +46,9 @@
                     <span class="block text-500 font-medium mb-3"
                         >Incidencias resueltas - 30 días</span
                     >
-                    <div class="text-900 font-medium text-xl">28441</div>
+                    <div class="text-900 font-medium text-xl">
+                        {{ dashboard.incidencias_resueltas }}
+                    </div>
                 </div>
                 <div
                     class="flex align-items-center justify-content-center bg-cyan-100 border-round"
@@ -60,7 +66,9 @@
                     <span class="block text-500 font-medium mb-3"
                         >Ultimas incidencias - 30 días</span
                     >
-                    <div class="text-900 font-medium text-xl">152</div>
+                    <div class="text-900 font-medium text-xl">
+                        {{ dashboard.ultimas_incidencias }}
+                    </div>
                 </div>
                 <div
                     class="flex align-items-center justify-content-center bg-purple-100 border-round"
@@ -74,11 +82,11 @@
 
     <div class="col-12">
         <div class="card">
-            <h5>Monitoreo de códigos de error</h5>
+            <h5>Monitoreo de auditoria</h5>
             <p-table
                 [value]="auditoria"
                 [paginator]="true"
-                [rows]="5"
+                [rows]="12"
                 responsiveLayout="scroll"
             >
                 <ng-template pTemplate="header">
@@ -87,7 +95,8 @@
                             RUC <p-sortIcon field="ruc"></p-sortIcon>
                         </th>
                         <th pSortableColumn="usuario_sol">
-                            Usuario Sol. <p-sortIcon field="usuario_sol"></p-sortIcon>
+                            Usuario Sol.
+                            <p-sortIcon field="usuario_sol"></p-sortIcon>
                         </th>
                         <th pSortableColumn="menu">
                             Menu <p-sortIcon field="menu"></p-sortIcon>
@@ -96,26 +105,30 @@
                             Proceso <p-sortIcon field="proceso"></p-sortIcon>
                         </th>
                         <th pSortableColumn="fecha_proceso">
-                            Fecha Proceso <p-sortIcon field="fecha_proceso"></p-sortIcon>
+                            Fecha Proceso
+                            <p-sortIcon field="fecha_proceso"></p-sortIcon>
                         </th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-auditoria>
                     <tr>
-                        <td style="width: 10%;">
-                            {{ auditoria.ruc }}
+                        <td style="width: 10%">
+                            {{ auditoria.ruc.substring(0, 11) }}
                         </td>
-                        <td style="width: 10%;">
-                            {{ auditoria.usuario_sol }}
+                        <td style="width: 10%">
+                            {{ auditoria.ruc.substring(11) }}
                         </td>
-                        <td style="width: 30%;">
+                        <td style="width: 24%">
                             {{ auditoria.menu }}
                         </td>
-                        <td style="width: 35%;">
+                        <td style="width: 46%">
                             {{ auditoria.proceso }}
                         </td>
-                        <td style="width: 10%;">
-                            {{ auditoria.fecha_proceso }}
+                        <td style="width: 10%">
+                            {{
+                                auditoria.fecha_proceso
+                                    | date : "yyyy-MM-dd" : "UTC"
+                            }}
                         </td>
                     </tr>
                 </ng-template>

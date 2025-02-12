@@ -1,4 +1,4 @@
-import { estadosEmpresa, modificarLocal } from './../../../entities/empresa';
+import { estadosEmpresa, localModificado, modificarLocal } from './../../../entities/empresa';
 import { OptionsNumber, OptionsString } from './../../soporte/incidencias/types/filtros';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
@@ -30,6 +30,8 @@ export class EmpresasComponent implements OnInit {
     estadosEmpresa: OptionsString[] = estadosEmpresa;
     modificarLocal: OptionsString[] = modificarLocal;
     operacion: number;
+    localModificado: OptionsString[] = localModificado;
+    localEdit: string = 'No';
 
     filtros: FiltrosEmpresa = {
         ruc: '',
@@ -166,8 +168,12 @@ export class EmpresasComponent implements OnInit {
 
     submitEditarEmpresa(empresaRequest: Empresa, operacion: number) {
         this.loading = true;
-        console.log(empresaRequest);
-        console.log(operacion);
+
+        if (this.localEdit == 'Si') {
+            const fecha = new Date();
+            const formattedDate = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(fecha.getDate()).padStart(2, '0')} ${String(fecha.getHours()).padStart(2, '0')}:${String(fecha.getMinutes()).padStart(2, '0')}:${String(fecha.getSeconds()).padStart(2, '0')}`;
+            empresaRequest.ultmodificacion = formattedDate;
+        }
 
         if (operacion == 1) {
             this.estadoSubmit = 'Editando...';

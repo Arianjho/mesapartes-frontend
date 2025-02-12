@@ -49,3 +49,14 @@ export const modificarLocal: OptionsString[] = [
         code: 'No'
     }
 ]
+
+export const localModificado: OptionsString[] = [
+    {
+        name: 'Si',
+        code: 'Si'
+    },
+    {
+        name: 'No',
+        code: 'No'
+    }
+]

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Dashboard } from 'src/app/entities/dashboard';
 import { EditarIncidenciaRequest, Incidencia, IncidenciaRevisadaResponse } from 'src/app/entities/incidencias';
 import { GeneralResponse } from 'src/app/entities/response';
 import { environment } from 'src/environments/environment';
@@ -32,5 +33,9 @@ export class IncidenciasService {
             `${environment.api_url}/incidencia/importar`,
             formData
         );
+    }
+
+    listarDashboard(): Observable<GeneralResponse<Dashboard>> {
+        return this.http.get<GeneralResponse<Dashboard>>(`${environment.api_url}/incidencia/dashboard`);
     }
 }

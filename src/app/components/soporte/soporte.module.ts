@@ -19,9 +19,12 @@ import { SoporteRoutingModule } from './soporte-routing.module';
 import { MessageService } from 'primeng/api';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CalendarModule } from 'primeng/calendar';
+import { DiccionarioComponent } from './diccionario/diccionario.component';
+import { EditorModule } from 'primeng/editor';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @NgModule({
-    declarations: [IncidenciasComponent],
+    declarations: [IncidenciasComponent, DiccionarioComponent],
     imports: [
         CommonModule,
         TableModule,
@@ -40,7 +43,9 @@ import { CalendarModule } from 'primeng/calendar';
         DialogModule,
         SoporteRoutingModule,
         MultiSelectModule,
-        CalendarModule
+        CalendarModule,
+        EditorModule,
+        CheckboxModule
     ],
     providers: [MessageService]
 })
