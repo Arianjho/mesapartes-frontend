@@ -22,9 +22,10 @@ import { CalendarModule } from 'primeng/calendar';
 import { DiccionarioComponent } from './diccionario/diccionario.component';
 import { EditorModule } from 'primeng/editor';
 import { CheckboxModule } from 'primeng/checkbox';
+import { TicketComponent } from './tickets/ticket.component';
 
 @NgModule({
-    declarations: [IncidenciasComponent, DiccionarioComponent],
+    declarations: [IncidenciasComponent, DiccionarioComponent, TicketComponent],
     imports: [
         CommonModule,
         TableModule,

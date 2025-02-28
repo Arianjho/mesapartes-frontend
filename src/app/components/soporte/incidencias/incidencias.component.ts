@@ -40,6 +40,7 @@ export class IncidenciasComponent implements OnInit {
         { name: '3443', code: '3443' },
         { name: '3378', code: '3378' },
         { name: '3367', code: '3367' },
+        { name: '3366', code: '3366' },
         { name: '3359', code: '3359' },
         { name: '3350', code: '3350' },
         { name: '3349', code: '3349' },
@@ -355,8 +356,10 @@ export class IncidenciasComponent implements OnInit {
                     }
                     break;
                 default:
-                    if (incidencia.revisado === 2) {
+                    if (incidencia.revisado === 2 && incidencia.coderror !== "NULL") {
                         this.editarRequest.detalle = "Documento fue reportado al partner, no se obtuvo respuesta, queda en su posición solucionar el documento o solucionar el problema para futuras emisiones";
+                    } else if (incidencia.revisado === 2 && incidencia.coderror === "NULL") {
+                        this.editarRequest.detalle = "Documento fue reportado al partner para que envie el documento pendiente, no se obtuvo respuesta";
                     } else if (incidencia.partner === "IVAN" && incidencia.coderror === "NULL") {
                         this.editarRequest.detalle = "Grupo IVAN, el gestiona sus envios";
                     } else {

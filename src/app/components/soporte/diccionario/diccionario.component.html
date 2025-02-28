@@ -11,7 +11,7 @@
                             label="Agregar"
                             icon="pi pi-pencil"
                             class="p-button-warning"
-                            (click)="agregarEmpresa()"
+                            (click)="agregarDiccionario()"
                         ></button>
                     </div>
                 </ng-template>
@@ -89,21 +89,21 @@
                                     pRipple
                                     icon="pi pi-eye"
                                     class="p-button-rounded p-button-info mr-2"
-                                    (click)="verDiccionario(diccionario)"
+                                    (click)="verDiccionario(diccionario, 1)"
                                 ></button>
                                 <button
                                     pButton
                                     pRipple
                                     icon="pi pi-pencil"
                                     class="p-button-rounded p-button-warning mr-2"
-                                    (click)="editarEmpresa(diccionario)"
+                                    (click)="verDiccionario(diccionario, 2)"
                                 ></button>
                                 <button
                                     pButton
                                     pRipple
                                     icon="pi pi-trash"
                                     class="p-button-rounded p-button-danger mr-2"
-                                    (click)="eliminarEmpresa(diccionario)"
+                                    (click)="eliminarDiccionario(diccionario)"
                                 ></button>
                             </div>
                         </td>
@@ -115,7 +115,7 @@
                             style="text-align: center; padding: 1rem 0"
                             colspan="5"
                         >
-                            No se encontraron empresas para mostrar
+                            No se encontraron registros para mostrar
                         </td>
                     </tr>
                 </ng-template>
@@ -136,8 +136,8 @@
                         <input
                             type="text"
                             pInputText
-                            [value]="v_diccionario.coderror"
-                            disabled
+                            [(ngModel)]="diccionarioRequest.coderror"
+                            [disabled]="readonlyDiccionario"
                         />
                     </div>
                     <div class="field col-12 md:col-10">
@@ -145,8 +145,8 @@
                         <input
                             type="text"
                             pInputText
-                            [value]="v_diccionario.descripcion"
-                            disabled
+                            [(ngModel)]="diccionarioRequest.descripcion"
+                            [disabled]="readonlyDiccionario"
                         />
                     </div>
                 </div>
@@ -154,10 +154,10 @@
                     <div class="field col-12">
                         <label for="quantity">Detalle:</label>
                         <p-editor
-                            [(ngModel)]="v_diccionario.detalle"
+                            [(ngModel)]="diccionarioRequest.detalle"
                             [quillModules]="editorConfig"
                             [style]="{ height: '160px' }"
-                            [readonly]="true"
+                            [readonly]="readonlyDiccionario"
                         />
                     </div>
                 </div>
@@ -171,109 +171,6 @@
                     icon="pi pi-times"
                     class="p-button-text"
                     (click)="hideDialogVer()"
-                ></button>
-                <button
-                    pButton
-                    pRipple
-                    label="Listo"
-                    icon="pi pi-check"
-                    class="p-button-text"
-                    (click)="hideDialogVer()"
-                ></button>
-            </ng-template>
-        </p-dialog>
-
-        <!--<p-dialog
-            [(visible)]="empresaEditDialog"
-            [style]="{ width: '550px' }"
-            [header]="labelDialog"
-            [modal]="true"
-            class="p-fluid"
-        >
-            <ng-template pTemplate="content">
-                <div class="formgrid grid">
-                    <div class="field col-12 md:col-4">
-                        <label for="ruc">RUC (*):</label>
-                        <input
-                            type="text"
-                            pInputText
-                            [(ngModel)]="empresaRequest.ruc"
-                        />
-                    </div>
-                    <div class="field col-12 md:col-8">
-                        <label for="quantity">Razón Social:</label>
-                        <input
-                            type="text"
-                            pInputText
-                            [(ngModel)]="empresaRequest.razonsocial"
-                        />
-                    </div>
-                </div>
-
-                <div class="formgrid grid">
-                    <div class="field col-12 md:col-4">
-                        <label for="ruc">Partner (*):</label>
-                        <p-dropdown
-                            [options]="selectedPartners"
-                            [(ngModel)]="empresaRequest.partner"
-                            optionLabel="name"
-                            optionValue="name"
-                            placeholder="Seleccione el partner"
-                            appendTo="body"
-                        ></p-dropdown>
-                    </div>
-                    <div class="field col-12 md:col-4">
-                        <label for="quantity">Estado (*):</label>
-                        <p-dropdown
-                            [options]="estadosEmpresa"
-                            [(ngModel)]="empresaRequest.estado"
-                            optionLabel="name"
-                            optionValue="code"
-                            placeholder="Seleccione el estado"
-                            appendTo="body"
-                        />
-                    </div>
-                    <div class="field col-12 md:col-4">
-                        <label for="quantity">Modalidad (*):</label>
-                        <input
-                            type="text"
-                            pInputText
-                            [(ngModel)]="empresaRequest.modalidad"
-                        />
-                    </div>
-                </div>
-
-                <div class="formgrid grid">
-                    <div class="field col-12 md:col-6">
-                        <label for="modlocal">Mod. Local (*):</label>
-                        <p-dropdown
-                            [options]="modificarLocal"
-                            [(ngModel)]="empresaRequest.modlocal"
-                            optionLabel="name"
-                            optionValue="code"
-                            placeholder="¿Se modificará el local?"
-                            appendTo="body"
-                        ></p-dropdown>
-                    </div>
-                    <div class="field col-12 md:col-6">
-                        <label for="quantity">Forma de envío:</label>
-                        <input
-                            type="text"
-                            pInputText
-                            [(ngModel)]="empresaRequest.formaenvio"
-                        />
-                    </div>
-                </div>
-            </ng-template>
-
-            <ng-template pTemplate="footer">
-                <button
-                    pButton
-                    pRipple
-                    label="Cancel"
-                    icon="pi pi-times"
-                    class="p-button-text"
-                    (click)="hideDialogEditar()"
                 ></button>
                 <button
                     pButton
@@ -281,70 +178,52 @@
                     [label]="estadoSubmit"
                     icon="pi pi-check"
                     class="p-button-text"
-                    (click)="submitEditarEmpresa(empresaRequest, operacion)"
+                    (click)="
+                        readonlyDiccionario
+                            ? hideDialogVer()
+                            : submitEditarDiccionario(diccionarioRequest, 1)
+                    "
                     [loading]="loading"
                 ></button>
             </ng-template>
         </p-dialog>
 
         <p-dialog
-            [(visible)]="filtrosDialog"
-            header="Filtros Generales"
+            [(visible)]="agregarDiccionarioDialog"
+            [style]="{ width: '750px' }"
+            [header]="labelDialog"
             [modal]="true"
-            [style]="{ width: '600px' }"
             class="p-fluid"
         >
             <ng-template pTemplate="content">
                 <div class="formgrid grid">
-                    <div class="field col-12 md:col-6">
-                        <label for="ruc">RUC:</label>
+                    <div class="field col-12 md:col-2">
+                        <label for="ruc">Cod. Error:</label>
                         <input
-                            name="ruc"
                             type="text"
                             pInputText
-                            [(ngModel)]="filtros.ruc"
+                            [(ngModel)]="diccionarioRequest.coderror"
+                            [disabled]="readonlyDiccionario"
                         />
                     </div>
-                    <div class="field col-12 md:col-6">
-                        <label for="razonsocial">Razón Social:</label>
+                    <div class="field col-12 md:col-10">
+                        <label for="quantity">Descripción:</label>
                         <input
-                            name="razonsocial"
                             type="text"
                             pInputText
-                            [(ngModel)]="filtros.razonsocial"
+                            [(ngModel)]="diccionarioRequest.descripcion"
+                            [disabled]="readonlyDiccionario"
                         />
                     </div>
                 </div>
-
                 <div class="formgrid grid">
-                    <div class="field col-12 md:col-4">
-                        <label for="codErrors">Partner:</label>
-                        <p-dropdown
-                            [options]="selectedPartners"
-                            [(ngModel)]="filtros.partner"
-                            optionLabel="name"
-                            placeholder="Seleccione el partner"
-                            appendTo="body"
-                        />
-                    </div>
-                    <div class="field col-12 md:col-4">
-                        <label for="codErrors">Estado:</label>
-                        <p-dropdown
-                            [options]="estadosEmpresa"
-                            [(ngModel)]="filtros.estado"
-                            optionLabel="name"
-                            placeholder="Seleccione el partner"
-                            appendTo="body"
-                        />
-                    </div>
-                    <div class="field col-12 md:col-4">
-                        <label for="codErrors">Mod. Local:</label>
-                        <p-dropdown
-                            [options]="modificarLocal"
-                            [(ngModel)]="filtros.modlocal"
-                            optionLabel="name"
-                            placeholder="Seleccione el partner"
-                            appendTo="body"
+                    <div class="field col-12">
+                        <label for="quantity">Detalle:</label>
+                        <p-editor
+                            [(ngModel)]="diccionarioRequest.detalle"
+                            [quillModules]="editorConfig"
+                            [style]="{ height: '160px' }"
+                            [readonly]="readonlyDiccionario"
                         />
                     </div>
                 </div>
@@ -354,32 +233,26 @@
                 <button
                     pButton
                     pRipple
-                    label="Cancelar"
+                    label="Cancel"
                     icon="pi pi-times"
                     class="p-button-text"
-                    (click)="hideDialogFiltros()"
-                ></button>
-                <button
-                    pButton
-                    label="Limpiar"
-                    icon="pi pi-times"
-                    class="p-button-text"
-                    (click)="limpiarFiltros()"
+                    (click)="hideDialogAgregar()"
                 ></button>
                 <button
                     pButton
                     pRipple
-                    [(label)]="estadoSubmit"
+                    [label]="estadoSubmit"
                     icon="pi pi-check"
                     class="p-button-text"
-                    (click)="aplicarFiltros()"
+                    (click)="submitAgregarDiccionario(diccionarioRequest)"
+                    [loading]="loading"
                 ></button>
             </ng-template>
         </p-dialog>
 
         <p-dialog
-            [(visible)]="empresaDeleteDialog"
-            header="Eliminar empresa - {{ empresa.ruc }}"
+            [(visible)]="diccionarioDeleteDialog"
+            [header]="labelDialog"
             [modal]="true"
             [style]="{ width: '600px' }"
             class="p-fluid"
@@ -387,7 +260,7 @@
             <ng-template pTemplate="content">
                 <div class="formgrid grid">
                     <div class="field col-12 md:col-6">
-                        <p>¿Estás seguro de eliminar la empresa?</p>
+                        <p>¿Estás seguro de eliminar el diccionario?</p>
                     </div>
                 </div>
             </ng-template>
@@ -407,9 +280,9 @@
                     [(label)]="estadoSubmit"
                     icon="pi pi-check"
                     class="p-button-text"
-                    (click)="eliminarEmpresaSubmit(empresa.id)"
+                    (click)="eliminarDiccionarioSubmit(idDetele)"
                 ></button>
             </ng-template>
-        </p-dialog> -->
+        </p-dialog>
     </div>
 </div>

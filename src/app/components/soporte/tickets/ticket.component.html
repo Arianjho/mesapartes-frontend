@@ -1,0 +1,179 @@
+<div class="grid">
+    <p-toast></p-toast>
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button
+                            pButton
+                            pRipple
+                            label="Agregar"
+                            icon="pi pi-plus"
+                            class="p-button-warning"
+                            (click)="agregarTicket()"
+                        ></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <button
+                        pButton
+                        pRipple
+                        label="Actualizar"
+                        icon="pi pi-sync"
+                        class="p-button-help"
+                        (click)="actualizarTabla()"
+                        [loading]="loading"
+                    ></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table
+                #dt
+                [value]="tickets"
+                [columns]="cols"
+                responsiveLayout="scroll"
+                [rows]="10"
+                [globalFilterFields]="['asunto', 'mensaje']"
+                [paginator]="true"
+                [rowsPerPageOptions]="[10, 20, 30]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+                [rowHover]="true"
+                dataKey="id"
+                [loading]="loading"
+                styleClass="p-datatable-striped"
+            >
+                <ng-template pTemplate="caption">
+                    <div
+                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+                    >
+                        <h5 class="m-0">Tickets</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input
+                                pInputText
+                                type="text"
+                                (input)="onGlobalFilter(dt, $event)"
+                                placeholder="Buscar..."
+                                class="w-full sm:w-auto"
+                            />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="asunto">
+                            Asunto <p-sortIcon field="asunto"></p-sortIcon>
+                        </th>
+                        <th>Mensaje</th>
+                        <th>Usuario</th>
+                        <th>Empresa</th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-ticket>
+                    <tr>
+                        <td>{{ ticket.asunto }}</td>
+                        <td><div [innerHTML]="ticket.mensaje"></div></td>
+                        <td>{{ ticket.usuario?.id }}</td>
+                        <td>{{ ticket.empresa?.id }}</td>
+                        <td>
+                            <div class="flex">
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-eye"
+                                    class="p-button-rounded p-button-info mr-2"
+                                    (click)="verTicket(ticket, 1)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-warning mr-2"
+                                    (click)="verTicket(ticket, 2)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-trash"
+                                    class="p-button-rounded p-button-danger mr-2"
+                                    (click)="eliminarTicket(ticket)"
+                                ></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td
+                            colspan="5"
+                            style="text-align: center; padding: 1rem 0"
+                        >
+                            No se encontraron registros
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog
+            [(visible)]="verTicketDialog"
+            [style]="{ width: '750px' }"
+            [header]="labelDialog"
+            [modal]="true"
+            class="p-fluid"
+        >
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <label for="asunto">Asunto:</label>
+                        <input
+                            type="text"
+                            pInputText
+                            [(ngModel)]="ticketRequest.asunto"
+                            [disabled]="readonlyTicket"
+                        />
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <label for="mensaje">Mensaje:</label>
+                        <p-editor
+                            [(ngModel)]="ticketRequest.mensaje"
+                            [quillModules]="editorConfig"
+                            [style]="{ height: '160px' }"
+                            [readonly]="readonlyTicket"
+                        ></p-editor>
+                    </div>
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="hideDialogVer()"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    [label]="estadoSubmit"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="
+                        readonlyTicket
+                            ? hideDialogVer()
+                            : submitEditarTicket(ticketRequest)
+                    "
+                    [loading]="loading"
+                ></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>
