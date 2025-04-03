@@ -19,3 +19,19 @@ export interface LoginRequest {
     usuario: string;
     password: string;
 }
+
+export interface UsuarioUpdateRequest {
+    nombres: string;
+    apellidos: string;
+    correo: string;
+    celular: string;
+    usuario: string;
+    estado: number;
+    perfil: Perfil;
+    partner?: Partner;
+}
+
+export interface UsuarioPasswordRequest {
+    password: string;
+}
+

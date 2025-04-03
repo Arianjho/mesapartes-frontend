@@ -1,6 +1,6 @@
 <div class="layout-topbar">
     <p-confirmDialog />
-    <a class="layout-topbar-logo" routerLink="">
+    <a class="layout-topbar-logo" routerLink="/inicio">
         <img src="assets/layout/images/{{layoutService.config().colorScheme === 'light' ? 'logo-dark' : 'logo-white'}}.svg" alt="logo">
         <span>MESAPARTES</span>
     </a>
@@ -20,7 +20,7 @@
         </button>
         <button class="p-link layout-topbar-button">
             <i class="pi pi-user"></i>
-            <span>Profile</span>
+            <span>Mi perfil</span>
         </button>
         <button (click)="confirm($event)" class="p-link layout-topbar-button">
             <i class="pi pi-sign-out"></i>

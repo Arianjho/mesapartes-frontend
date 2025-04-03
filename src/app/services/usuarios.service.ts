@@ -1,22 +1,33 @@
 import { inject, Injectable } from '@angular/core';
-import { LoginRequest, Usuario } from '../entities/usuarios';
 import { HttpClient } from '@angular/common/http';
-import { GeneralResponse } from '../entities/response';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
+
+import { LoginRequest, Usuario, UsuarioPasswordRequest, UsuarioUpdateRequest } from '../entities/usuarios';
+import { GeneralResponse } from '../entities/response';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UsuariosService {
 
+    private readonly apiUrl = `${environment.api_url}/auth`;
+
     constructor(private http: HttpClient) { }
 
     private router = inject(Router);
 
     login(loginRequest: LoginRequest): Observable<GeneralResponse<Usuario>> {
-        return this.http.post<GeneralResponse<Usuario>>(`${environment.api_url}/auth/login`, loginRequest);
+        return this.http.post<GeneralResponse<Usuario>>(`${this.apiUrl}/login`, loginRequest);
+    }
+
+    updateUsuario(id: number, updateRequest: UsuarioUpdateRequest): Observable<GeneralResponse<Usuario>> {
+        return this.http.put<GeneralResponse<Usuario>>(`${this.apiUrl}/update/${id}`, updateRequest);
+    }
+
+    updatePassword(id: number, passwordRequest: UsuarioPasswordRequest): Observable<GeneralResponse<Usuario>> {
+        return this.http.put<GeneralResponse<Usuario>>(`${this.apiUrl}/update/password/${id}`, passwordRequest);
     }
 
     isAuthenticated(): boolean {

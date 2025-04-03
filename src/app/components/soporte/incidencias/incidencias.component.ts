@@ -116,6 +116,7 @@ export class IncidenciasComponent implements OnInit {
         { name: '2033', code: '2033' },
         { name: '2027', code: '2027' },
         { name: '2022', code: '2022' },
+        { name: '2021', code: '2021' },
         { name: '2018', code: '2018' },
         { name: '2017', code: '2017' },
         { name: '2014', code: '2014' },
