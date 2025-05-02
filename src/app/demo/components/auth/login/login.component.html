@@ -20,7 +20,7 @@
                     <div class="flex align-items-center justify-content-between mb-3">
 
                     </div>
-                    <button pButton pRipple label="Iniciar Sesion" class="w-full p-3 text-xl" (click)="login()"></button>
+                    <button pButton pRipple [label]="labelLogin" [loading]="loadingLogin" class="w-full p-3 text-xl" (click)="login()"></button>
                 </div>
             </div>
         </div>

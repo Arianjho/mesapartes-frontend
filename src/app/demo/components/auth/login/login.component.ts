@@ -41,8 +41,12 @@ export class LoginComponent {
 
     handle = false;
     iconTheme = 'pi pi pi-sun';
+    loadingLogin = false;
+    labelLogin = 'Iniciar Sesion';
 
     login(): void {
+        this.loadingLogin = true;
+        this.labelLogin = 'Iniciando Sesion...';
         this.usuarioService.login({ usuario: this.usuario, password: this.password }).subscribe({
             next: (res) => {
                 if (res.status !== 200) {
@@ -57,7 +61,10 @@ export class LoginComponent {
                 const errorMessage = err.error?.message || 'Error desconocido';
                 this.messageService.add({ severity: 'error', summary: 'Error', detail: errorMessage });
             },
-            complete: () => console.log('Login request completed')
+            complete: () => {
+                this.loadingLogin = false;
+                this.labelLogin = 'Iniciar Sesion';
+            }
         });
     }
 

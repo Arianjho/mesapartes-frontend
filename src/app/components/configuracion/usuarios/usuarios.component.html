@@ -1,0 +1,151 @@
+<div class="grid">
+    <p-toast></p-toast>
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button
+                            pButton
+                            pRipple
+                            label="Agregar"
+                            icon="pi pi-pencil"
+                            class="p-button-warning"
+                            (click)="agregar()"
+                        ></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <button
+                        pButton
+                        pRipple
+                        label="Actualizar"
+                        icon="pi pi-sync"
+                        class="p-button-help"
+                        (click)="actualizarTabla()"
+                        [loading]="loading"
+                    ></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table
+                #dt
+                [value]="users"
+                [columns]="cols"
+                responsiveLayout="scroll"
+                [rows]="10"
+                [globalFilterFields]="[
+                    'dni',
+                    'nombres',
+                    'partner.partner',
+                    'perfil.perfil',
+                    'estado',
+                ]"
+                [paginator]="true"
+                [rowsPerPageOptions]="[10, 20, 30]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [rowHover]="true"
+                dataKey="id"
+                [loading]="loading"
+                styleClass="p-datatable-striped"
+            >
+                <ng-template pTemplate="caption">
+                    <div
+                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+                    >
+                        <h5 class="m-0">Usuarios</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input
+                                pInputText
+                                type="text"
+                                (input)="onGlobalFilter(dt, $event)"
+                                placeholder="Buscar..."
+                                class="w-full sm:w-auto"
+                            />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="dni">
+                            DNI <p-sortIcon field="dni"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="nombres">
+                            Nombre
+                            <p-sortIcon field="nombres"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="partner">
+                            Partner <p-sortIcon field="partner"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="perfil">
+                            Perfil
+                            <p-sortIcon field="perfil"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="estado">
+                            Estado
+                            <p-sortIcon field="estado"></p-sortIcon>
+                        </th>
+                        <th>Operaciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-user>
+                    <tr>
+                        <td style="width: 8%">
+                            {{ user.dni }}
+                        </td>
+                        <td style="width: 24%">
+                            {{ user.nombres + " " + user.apellidos }}
+                        </td>
+                        <td style="width: 8%">
+                            {{ user.partner.partner }}
+                        </td>
+                        <td style="width: 10%">
+                            {{ user.perfil.perfil }}
+                        </td>
+                        <td style="width: 10%">
+                            {{ user.estado === 1 ? 'Activo' : 'Inactivo' }}
+                        </td>
+                        <td style="width: 10%">
+                            <div class="flex">
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-eye"
+                                    class="p-button-rounded p-button-info mr-2"
+                                    (click)="ver(user)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-warning mr-2"
+                                    (click)="editar(user)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-trash"
+                                    class="p-button-rounded p-button-danger mr-2"
+                                    (click)="eliminar(user)"
+                                ></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td
+                            style="text-align: center; padding: 1rem 0"
+                            colspan="9"
+                        >
+                            No se encontraron usuarios para mostrar
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

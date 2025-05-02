@@ -31,7 +31,8 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Configuración',
                 items: [
-                    { label: 'Empresas', icon: 'pi pi-fw pi-align-justify', routerLink: ['/configuracion/empresas'] }
+                    { label: 'Empresas', icon: 'pi pi-fw pi-align-justify', routerLink: ['/configuracion/empresas'] },
+                    { label: 'Usuarios', icon: 'pi pi-fw pi-align-justify', routerLink: ['/configuracion/usuarios'] }
                 ]
             }
         ];

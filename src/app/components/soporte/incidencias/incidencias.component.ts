@@ -42,6 +42,7 @@ export class IncidenciasComponent implements OnInit {
         { name: '3367', code: '3367' },
         { name: '3366', code: '3366' },
         { name: '3359', code: '3359' },
+        { name: '3351', code: '3351' },
         { name: '3350', code: '3350' },
         { name: '3349', code: '3349' },
         { name: '3348', code: '3348' },
@@ -62,6 +63,7 @@ export class IncidenciasComponent implements OnInit {
         { name: '3271', code: '3271' },
         { name: '3270', code: '3270' },
         { name: '3267', code: '3267' },
+        { name: '3265', code: '3265' },
         { name: '3262', code: '3262' },
         { name: '3252', code: '3252' },
         { name: '3250', code: '3250' },
@@ -140,7 +142,8 @@ export class IncidenciasComponent implements OnInit {
         { name: 'Revisado', code: 1 },
         { name: 'Pendiente', code: 2 },
         { name: 'Inhabilitado', code: 3 },
-        { name: 'Pendiente de Pago', code: 4 }
+        { name: 'De baja', code: 4 },
+        { name: 'Pendiente de Pago', code: 5 }
     ]
 
     private estadosEditar: OptionsNumber[] = [
@@ -295,6 +298,8 @@ export class IncidenciasComponent implements OnInit {
             case 3:
                 return "<span class='p-tag p-tag-danger'> Inhabilitado </span>";
             case 4:
+                return "<span class='p-tag p-tag-danger'> De baja </span>";
+            case 5:
                 return "<span class='p-tag p-tag-danger'> Pend. Pago </span>";
             default:
                 return "Desconocido";

@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { EmpresasComponent } from './empresas/empresas.component';
+import { UsuariosComponent } from './usuarios/usuarios.component';
 
 const routes: Routes = [
     { path: 'empresas', component: EmpresasComponent },
+    { path: 'usuarios', component: UsuariosComponent },
     { path: '**', redirectTo: '/notfound' }
 ];
 

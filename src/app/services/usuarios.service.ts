@@ -18,6 +18,10 @@ export class UsuariosService {
 
     private router = inject(Router);
 
+    getAll(): Observable<GeneralResponse<Usuario[]>> {
+        return this.http.get<GeneralResponse<Usuario[]>>(`${this.apiUrl}`);
+    }
+
     login(loginRequest: LoginRequest): Observable<GeneralResponse<Usuario>> {
         return this.http.post<GeneralResponse<Usuario>>(`${this.apiUrl}/login`, loginRequest);
     }

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { ConfiguracionRoutingModule } from './configuracion-routing.module';
 import { TableModule } from 'primeng/table';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
@@ -12,10 +12,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ToolbarModule } from 'primeng/toolbar';
 import { EmpresasComponent } from './empresas/empresas.component';
 import { DropdownModule } from 'primeng/dropdown';
-
-
+import { UsuariosComponent } from './usuarios/usuarios.component';
 @NgModule({
-  declarations: [EmpresasComponent],
+  declarations: [EmpresasComponent, UsuariosComponent],
   imports: [
     CommonModule,
     ConfiguracionRoutingModule,
@@ -26,7 +25,8 @@ import { DropdownModule } from 'primeng/dropdown';
     DialogModule,
     InputTextModule,
     ToolbarModule,
-    DropdownModule
+    DropdownModule,
+    ReactiveFormsModule
   ],
   providers: [MessageService]
 })
