@@ -22,6 +22,14 @@ export class UsuariosService {
         return this.http.get<GeneralResponse<Usuario[]>>(`${this.apiUrl}`);
     }
 
+    getById(id: number): Observable<GeneralResponse<Usuario>> {
+        return this.http.get<GeneralResponse<Usuario>>(`${this.apiUrl}/${id}`);
+    }
+
+    // register(request: RegisterRequest): Observable<GeneralResponse<Usuario>> {
+    //     return this.http.post<GeneralResponse<Usuario>>(`${this.apiUrl}/register`, request);
+    // }
+
     login(loginRequest: LoginRequest): Observable<GeneralResponse<Usuario>> {
         return this.http.post<GeneralResponse<Usuario>>(`${this.apiUrl}/login`, loginRequest);
     }

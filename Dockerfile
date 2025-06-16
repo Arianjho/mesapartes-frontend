@@ -1,20 +1,21 @@
-# Usa una imagen base de Node.js
-FROM node:18
+# Etapa de Build
+FROM node:20 AS build
 
-# Establece el directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copia el package.json y package-lock.json para instalar dependencias
 COPY package*.json ./
-
-# Instala las dependencias
 RUN npm install
 
-# Copia todo el proyecto al contenedor
 COPY . .
+RUN npm run build -- --configuration production
 
-# Expone el puerto 4200 para ng serve
-EXPOSE 4200
+# Etapa de Producción: nginx
+FROM nginx:stable-alpine
 
-# Comando para ejecutar ng serve
-CMD ["npm", "run", "start"]
+COPY --from=build /app/dist/mesapartes /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

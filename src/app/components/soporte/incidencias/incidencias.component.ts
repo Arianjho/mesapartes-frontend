@@ -356,6 +356,13 @@ export class IncidenciasComponent implements OnInit {
                 case '2323':
                     this.editarRequest.detalle = "Documento al que hace referencia ya fue anulado por _baja_";
                     break;
+                case '2326':
+                    if (incidencia.documento.includes('RC-')) {
+                       this.editarRequest.detalle = "Documento fue liberado, ya se emitió su reemplazo";
+                    } else if (incidencia.tipodocumento === '01') {
+                        this.editarRequest.detalle = "Documento quedará rechazado, empresa debe emitir reemplazo, ya se reportó al partner";
+                    }
+                    break;
                 case '2957':
                     if (incidencia.documento.includes('RA-') || incidencia.documento.includes('RC-')) {
                         this.editarRequest.detalle = "Documento intenta anular comprobante del _fecha_, ya superó la fecha límite";

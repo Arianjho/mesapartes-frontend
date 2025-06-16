@@ -40,7 +40,7 @@
                     'nombres',
                     'partner.partner',
                     'perfil.perfil',
-                    'estado',
+                    'estado'
                 ]"
                 [paginator]="true"
                 [rowsPerPageOptions]="[10, 20, 30]"
@@ -106,7 +106,7 @@
                             {{ user.perfil.perfil }}
                         </td>
                         <td style="width: 10%">
-                            {{ user.estado === 1 ? 'Activo' : 'Inactivo' }}
+                            {{ user.estado === 1 ? "Activo" : "Inactivo" }}
                         </td>
                         <td style="width: 10%">
                             <div class="flex">
@@ -147,5 +147,116 @@
                 </ng-template>
             </p-table>
         </div>
+
+        <p-dialog
+            [(visible)]="userRegisterDialog"
+            [style]="{ width: '550px' }"
+            [header]="headerDialog"
+            [modal]="true"
+            class="p-fluid"
+        >
+            <ng-template pTemplate="content">
+                <form [formGroup]="formGroup">
+                    <div class="formgrid grid">
+                        <div class="field col-12 md:col-4">
+                            <label for="dni">DNI:</label>
+                            <input
+                                pInputText
+                                id="dni"
+                                formControlName="dni"
+                                [readonly]="viewMode"
+                            />
+                        </div>
+                        <div class="field col-12 md:col-8">
+                            <label for="nombres">Nombres:</label>
+                            <input
+                                pInputText
+                                id="nombres"
+                                formControlName="nombres"
+                                [readonly]="viewMode"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="formgrid grid">
+                        <div class="field col-12 md:col-6">
+                            <label for="apellidos">Apellidos:</label>
+                            <input
+                                pInputText
+                                id="apellidos"
+                                formControlName="apellidos"
+                                [readonly]="viewMode"
+                            />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="estado">Estado:</label>
+                            <p-dropdown
+                                [options]="estados"
+                                formControlName="estado"
+                                optionLabel="label"
+                                optionValue="value"
+                                [disabled]="viewMode"
+                                placeholder="Seleccione estado"
+                            ></p-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="formgrid grid">
+                        <div class="field col-12 md:col-6">
+                            <label for="partner">Partner:</label>
+                            <p-dropdown
+                                [options]="partners"
+                                formControlName="partner"
+                                optionLabel="name"
+                                optionValue="id"
+                                [disabled]="viewMode"
+                                placeholder="Seleccione partner"
+                            ></p-dropdown>
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="perfil">Perfil:</label>
+                            <p-dropdown
+                                [options]="perfiles"
+                                formControlName="perfil"
+                                optionLabel="name"
+                                optionValue="id"
+                                [disabled]="viewMode"
+                                placeholder="Seleccione perfil"
+                            ></p-dropdown>
+                        </div>
+                    </div>
+                </form>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    label="Cancelar"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="hideUserDialog()"
+                ></button>
+                <button
+                    *ngIf="!viewMode"
+                    pButton
+                    pRipple
+                    [label]="labelSubmit"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    [loading]="loading"
+                    (click)="submitUser()"
+                ></button>
+                <button
+                    *ngIf="viewMode"
+                    pButton
+                    pRipple
+                    label="Cerrar"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    (click)="hideUserDialog()"
+                ></button>
+            </ng-template>
+        </p-dialog>
     </div>
 </div>
