@@ -98,6 +98,7 @@ export class IncidenciasComponent implements OnInit {
         { name: '2638', code: '2638' },
         { name: '2536', code: '2536' },
         { name: '2521', code: '2521' },
+        { name: '2513', code: '2513' },
         { name: '2375', code: '2375' },
         { name: '2370', code: '2370' },
         { name: '2346', code: '2346' },
