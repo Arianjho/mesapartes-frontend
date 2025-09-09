@@ -33,6 +33,7 @@ export class IncidenciasComponent implements OnInit {
     private codErrors: OptionsString[] = [
         { name: 'NULL', code: 'NULL' },
         { name: '98', code: '98' },
+        { name: '151', code: '151' },
         { name: '400', code: '400' },
         { name: '3489', code: '3489' },
         { name: '3444', code: '3444' },
@@ -363,7 +364,7 @@ export class IncidenciasComponent implements OnInit {
                     break;
                 case '2326':
                     if (incidencia.documento.includes('RC-')) {
-                       this.editarRequest.detalle = "Documento fue liberado, ya se emitió su reemplazo";
+                        this.editarRequest.detalle = "Documento fue liberado, ya se emitió su reemplazo";
                     } else if (incidencia.tipodocumento === '01') {
                         this.editarRequest.detalle = "Documento quedará rechazado, empresa debe emitir reemplazo, ya se reportó al partner";
                     }
