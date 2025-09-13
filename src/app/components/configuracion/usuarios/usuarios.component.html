@@ -124,13 +124,13 @@
                                     class="p-button-rounded p-button-warning mr-2"
                                     (click)="editar(user)"
                                 ></button>
-                                <button
+                                <!-- <button
                                     pButton
                                     pRipple
                                     icon="pi pi-trash"
                                     class="p-button-rounded p-button-danger mr-2"
                                     (click)="eliminar(user)"
-                                ></button>
+                                ></button> -->
                             </div>
                         </td>
                     </tr>
@@ -197,7 +197,54 @@
                                 optionValue="value"
                                 [disabled]="viewMode"
                                 placeholder="Seleccione estado"
+                                appendTo="body"
                             ></p-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="formgrid grid">
+                        <div class="field col-12 md:col-6">
+                            <label for="correo">Correo:</label>
+                            <input
+                                pInputText
+                                id="correo"
+                                formControlName="correo"
+                                [readonly]="viewMode"
+                            />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="celular">Celular:</label>
+                            <input
+                                pInputText
+                                id="celular"
+                                formControlName="celular"
+                                [readonly]="viewMode"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="formgrid grid">
+                        <div class="field col-12 md:col-6">
+                            <label for="usuario">Usuario:</label>
+                            <input
+                                pInputText
+                                id="usuario"
+                                formControlName="usuario"
+                                [readonly]="viewMode"
+                            />
+                        </div>
+                        <div
+                            class="field col-12 md:col-6"
+                            *ngIf="operacion === 'create'"
+                        >
+                            <label for="password">Contraseña:</label>
+                            <p-password
+                                id="password"
+                                formControlName="password"
+                                [readonly]="viewMode"
+                                [toggleMask]="true"
+                                [feedback]="false"
+                            />
                         </div>
                     </div>
 
@@ -205,23 +252,21 @@
                         <div class="field col-12 md:col-6">
                             <label for="partner">Partner:</label>
                             <p-dropdown
-                                [options]="partners"
+                                [options]="partnersSelection"
                                 formControlName="partner"
-                                optionLabel="name"
-                                optionValue="id"
                                 [disabled]="viewMode"
                                 placeholder="Seleccione partner"
+                                appendTo="body"
                             ></p-dropdown>
                         </div>
                         <div class="field col-12 md:col-6">
                             <label for="perfil">Perfil:</label>
                             <p-dropdown
-                                [options]="perfiles"
+                                [options]="perfilesSelection"
                                 formControlName="perfil"
-                                optionLabel="name"
-                                optionValue="id"
                                 [disabled]="viewMode"
                                 placeholder="Seleccione perfil"
+                                appendTo="body"
                             ></p-dropdown>
                         </div>
                     </div>

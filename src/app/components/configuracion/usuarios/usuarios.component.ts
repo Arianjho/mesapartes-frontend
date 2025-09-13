@@ -1,7 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
-import { Usuario } from 'src/app/entities/usuarios';
+import { Partner } from 'src/app/entities/partner';
+import { Perfil } from 'src/app/entities/perfil';
+import { RegisterRequest, Usuario } from 'src/app/entities/usuarios';
+import { PartnerService } from 'src/app/services/partner.service';
 import { UsuariosService } from 'src/app/services/usuarios.service';
 
 @Component({
@@ -12,6 +15,7 @@ export class UsuariosComponent {
     private readonly userService = inject(UsuariosService);
     private readonly messageService = inject(MessageService);
     private readonly fb = inject(NonNullableFormBuilder);
+    private readonly partnerService = inject(PartnerService);
 
     submitted: boolean = false;
     loading: boolean = false;
@@ -33,13 +37,43 @@ export class UsuariosComponent {
     ];
 
     partners: any[] = []; // debes cargar desde API
-    perfiles: any[] = []; // debes cargar desde API
+    perfiles: Perfil[] = [
+        { id: 1, perfil: 'Administrador' },
+        { id: 2, perfil: 'Partner' },
+        { id: 3, perfil: 'Soporte' }
+    ];
+
+    perfilesSelection = this.perfiles.map(p => ({ label: p.perfil, value: p }));
+    partnersSelection: { label: string; value: Partner }[] = [];
+
     formGroup!: FormGroup;
 
     ngOnInit(): void {
         this.getUsers();
         this.initForm();
-        this.loadPartnersAndPerfiles(); // si usas servicios para esto
+        this.loadPartners();
+    }
+
+    actualizarTabla() {
+        this.getUsers();
+    }
+
+    loadPartners() {
+        this.partnerService.listar().subscribe({
+            next: (res) => {
+                this.partnersSelection = res.data.map(p => ({
+                    label: p.partner,
+                    value: p
+                }));
+            },
+            error: (err) => {
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'No se pudieron cargar los partners'
+                });
+            }
+        });
     }
 
     initForm() {
@@ -47,6 +81,10 @@ export class UsuariosComponent {
             dni: ['', [Validators.required, Validators.minLength(8)]],
             nombres: ['', Validators.required],
             apellidos: ['', Validators.required],
+            correo: ['', [Validators.required, Validators.email]],
+            celular: ['', Validators.required],
+            usuario: ['', Validators.required],
+            password: ['', Validators.required],
             estado: [1, Validators.required],
             partner: [null, Validators.required],
             perfil: [null, Validators.required]
@@ -84,14 +122,18 @@ export class UsuariosComponent {
 
         if (user) {
             this.selectedUser = user;
-            this.formGroup.setValue({
+            this.formGroup.patchValue({
                 dni: user.dni,
                 nombres: user.nombres,
                 apellidos: user.apellidos,
+                correo: user.correo,
+                celular: user.celular,
+                usuario: user.usuario,
                 estado: user.estado,
-                partner: user.partner.id,
-                perfil: user.perfil.id
+                partner: user.partner,
+                perfil: user.perfil
             });
+            this.formGroup.get('password')?.reset();
         } else {
             this.formGroup.reset();
             this.formGroup.patchValue({ estado: 1 });
@@ -100,80 +142,71 @@ export class UsuariosComponent {
         this.userRegisterDialog = true;
     }
 
-    //     hideUserDialog() {
-    //         this.userRegisterDialog = false;
-    //         this.formGroup.reset();
-    //         this.selectedUser = null;
-    //     }
+    hideUserDialog() {
+        this.userRegisterDialog = false;
+        this.formGroup.reset();
+        this.selectedUser = null;
+    }
 
-    //     submitUser() {
-    //         if (this.formGroup.invalid) {
-    //             this.formGroup.markAllAsTouched();
-    //             return;
-    //         }
+    submitUser() {
+        if (this.operacion === 'edit') { this.formGroup.get('password')?.setValue("1") }
 
-    //         const payload = this.formGroup.getRawValue();
-    //         this.loading = true;
+        if (this.formGroup.invalid) {
+            this.formGroup.markAllAsTouched();
+            return;
+        }
 
-    //         if (this.operacion === 'edit' && this.selectedUser) {
-    //             this.userService.update(this.selectedUser.id, payload).subscribe({
-    //                 next: (res) => {
-    //                     this.messageService.add({
-    //                         severity: 'success',
-    //                         summary: 'Éxito',
-    //                         detail: res.message
-    //                     });
-    //                     this.loading = false;
-    //                     this.getUsers();
-    //                     this.hideUserDialog();
-    //                 },
-    //                 error: () => {
-    //                     this.loading = false;
-    //                 }
-    //             });
-    //         } else {
-    //             this.userService.create(payload).subscribe({
-    //                 next: (res) => {
-    //                     this.messageService.add({
-    //                         severity: 'success',
-    //                         summary: 'Éxito',
-    //                         detail: res.message
-    //                     });
-    //                     this.loading = false;
-    //                     this.getUsers();
-    //                     this.hideUserDialog();
-    //                 },
-    //                 error: () => {
-    //                     this.loading = false;
-    //                 }
-    //             });
-    //         }
-    //     }
+        const payload = this.formGroup.getRawValue() as RegisterRequest;
 
-    //     ver(user: Usuario) {
-    //         this.openDialog('view', user);
-    //     }
+        this.loading = true;
 
-    //     agregar() {
-    //         this.openDialog('create');
-    //     }
+        if (this.operacion === 'edit' && this.selectedUser) {
+            this.userService.updateUsuario(this.selectedUser.id, payload).subscribe({
+                next: (res) => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Éxito',
+                        detail: res.message
+                    });
+                    this.loading = false;
+                    this.getUsers();
+                    this.hideUserDialog();
+                },
+                error: () => {
+                    this.loading = false;
+                }
+            });
+        } else {
+            this.userService.register(payload).subscribe({
+                next: (res) => {
+                    this.messageService.add({
+                        severity: 'success',
+                        summary: 'Éxito',
+                        detail: res.message
+                    });
+                    this.loading = false;
+                    this.getUsers();
+                    this.hideUserDialog();
+                },
+                error: () => {
+                    this.loading = false;
+                }
+            });
+        }
+    }
 
-    //     editar(user: Usuario) {
-    //         this.openDialog('edit', user);
-    //     }
+    agregar() {
+        this.openDialog('create');
+    }
 
-    //     eliminar(user: Usuario) {
-    //         this.userService.delete(user.id).subscribe({
-    //             next: () => {
-    //                 this.messageService.add({
-    //                     severity: 'success',
-    //                     summary: 'Eliminado',
-    //                     detail: `Usuario ${user.dni} eliminado`
-    //                 });
-    //                 this.getUsers();
-    //             }
-    //         });
-    //     }
+    editar(user: Usuario) {
+        this.openDialog('edit', user);
+    }
+
+    ver(user: Usuario) {
+        this.openDialog('view', user);
+    }
+
 
     loadPartnersAndPerfiles() {
         //

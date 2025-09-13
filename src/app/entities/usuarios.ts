@@ -35,3 +35,15 @@ export interface UsuarioPasswordRequest {
     password: string;
 }
 
+export interface RegisterRequest {
+    dni: string
+    nombres: string
+    apellidos: string
+    correo: string
+    celular: string
+    usuario: string
+    password: string
+    estado: number
+    perfil: Perfil
+    partner: Partner
+}

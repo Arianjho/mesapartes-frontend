@@ -4,7 +4,7 @@
 
 export const environment = {
     production: false,
-    api_url: 'https://mesadmin.arianjosafat.com/api'
+    api_url: 'https://mesadmin.arianjosafat.com/api' // Modificar por http://localhost:8083/api
 };
 
 /*

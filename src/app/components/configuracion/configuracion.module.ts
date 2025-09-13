@@ -13,21 +13,23 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { EmpresasComponent } from './empresas/empresas.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { UsuariosComponent } from './usuarios/usuarios.component';
+import { PasswordModule } from 'primeng/password';
 @NgModule({
-  declarations: [EmpresasComponent, UsuariosComponent],
-  imports: [
-    CommonModule,
-    ConfiguracionRoutingModule,
-    TableModule,
-    FormsModule,
-    ButtonModule,
-    ToastModule,
-    DialogModule,
-    InputTextModule,
-    ToolbarModule,
-    DropdownModule,
-    ReactiveFormsModule
-  ],
-  providers: [MessageService]
+    declarations: [EmpresasComponent, UsuariosComponent],
+    imports: [
+        CommonModule,
+        ConfiguracionRoutingModule,
+        TableModule,
+        FormsModule,
+        ButtonModule,
+        ToastModule,
+        DialogModule,
+        InputTextModule,
+        ToolbarModule,
+        DropdownModule,
+        ReactiveFormsModule,
+        PasswordModule
+    ],
+    providers: [MessageService]
 })
 export class ConfiguracionModule { }

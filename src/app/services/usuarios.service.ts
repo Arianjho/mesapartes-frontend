@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 
-import { LoginRequest, Usuario, UsuarioPasswordRequest, UsuarioUpdateRequest } from '../entities/usuarios';
+import { LoginRequest, RegisterRequest, Usuario, UsuarioPasswordRequest, UsuarioUpdateRequest } from '../entities/usuarios';
 import { GeneralResponse } from '../entities/response';
 
 @Injectable({
@@ -26,9 +26,9 @@ export class UsuariosService {
         return this.http.get<GeneralResponse<Usuario>>(`${this.apiUrl}/${id}`);
     }
 
-    // register(request: RegisterRequest): Observable<GeneralResponse<Usuario>> {
-    //     return this.http.post<GeneralResponse<Usuario>>(`${this.apiUrl}/register`, request);
-    // }
+    register(request: RegisterRequest): Observable<GeneralResponse<Usuario>> {
+        return this.http.post<GeneralResponse<Usuario>>(`${this.apiUrl}/register`, request);
+    }
 
     login(loginRequest: LoginRequest): Observable<GeneralResponse<Usuario>> {
         return this.http.post<GeneralResponse<Usuario>>(`${this.apiUrl}/login`, loginRequest);
